@@ -22,7 +22,7 @@ public class Snake
     public Snake(int startX, int startY)
     {
         Body = new List<Point> { new Point(startX, startY) };
-        Direction = new Point(1, 0); // Начальное направление: вправо
+        Direction = new Point(1, 0); 
     }
 
     public void Move()
@@ -41,9 +41,7 @@ public class Snake
     public bool CheckCollision(int width, int height)
     {
         Point head = Body[0];
-        //Проверка на столкновение со стеной
         if (head.X < 0 || head.X >= width || head.Y < 0 || head.Y >= height) return true;
-        //Проверка на столкновение с собственным телом
         for (int i = 1; i < Body.Count; i++)
         {
             if (head.X == Body[i].X && head.Y == Body[i].Y) return true;
@@ -110,14 +108,12 @@ public class Game
             Console.Write("#");
         }
 
-        // Рисуем змейку
         foreach (Point point in Snake.Body)
         {
             Console.SetCursorPosition(point.X, point.Y);
             Console.Write("s");
         }
 
-        // Рисуем еду
         Console.SetCursorPosition(Food.X, Food.Y);
         Console.Write("@");
     }
@@ -149,7 +145,7 @@ public class Game
                 GenerateFood();
             }
 
-            Thread.Sleep(100); // Задержка для регулирования скорости
+            Thread.Sleep(100); 
         }
         Console.WriteLine("\nИгра окончена!");
     }
