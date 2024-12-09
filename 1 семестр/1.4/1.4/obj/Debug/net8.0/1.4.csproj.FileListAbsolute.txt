@@ -1,0 +1,15 @@
+C:\Users\User\Documents\GitHub\кдз 1семестр\1.4\1.4\bin\Debug\net8.0\1.4.exe
+C:\Users\User\Documents\GitHub\кдз 1семестр\1.4\1.4\bin\Debug\net8.0\1.4.deps.json
+C:\Users\User\Documents\GitHub\кдз 1семестр\1.4\1.4\bin\Debug\net8.0\1.4.runtimeconfig.json
+C:\Users\User\Documents\GitHub\кдз 1семестр\1.4\1.4\bin\Debug\net8.0\1.4.dll
+C:\Users\User\Documents\GitHub\кдз 1семестр\1.4\1.4\bin\Debug\net8.0\1.4.pdb
+C:\Users\User\Documents\GitHub\кдз 1семестр\1.4\1.4\obj\Debug\net8.0\1.4.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\User\Documents\GitHub\кдз 1семестр\1.4\1.4\obj\Debug\net8.0\1.4.AssemblyInfoInputs.cache
+C:\Users\User\Documents\GitHub\кдз 1семестр\1.4\1.4\obj\Debug\net8.0\1.4.AssemblyInfo.cs
+C:\Users\User\Documents\GitHub\кдз 1семестр\1.4\1.4\obj\Debug\net8.0\1.4.csproj.CoreCompileInputs.cache
+C:\Users\User\Documents\GitHub\кдз 1семестр\1.4\1.4\obj\Debug\net8.0\1.4.sourcelink.json
+C:\Users\User\Documents\GitHub\кдз 1семестр\1.4\1.4\obj\Debug\net8.0\1.4.dll
+C:\Users\User\Documents\GitHub\кдз 1семестр\1.4\1.4\obj\Debug\net8.0\refint\1.4.dll
+C:\Users\User\Documents\GitHub\кдз 1семестр\1.4\1.4\obj\Debug\net8.0\1.4.pdb
+C:\Users\User\Documents\GitHub\кдз 1семестр\1.4\1.4\obj\Debug\net8.0\1.4.genruntimeconfig.cache
+C:\Users\User\Documents\GitHub\кдз 1семестр\1.4\1.4\obj\Debug\net8.0\ref\1.4.dll
