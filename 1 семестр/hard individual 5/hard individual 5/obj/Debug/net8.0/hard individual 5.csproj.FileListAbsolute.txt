@@ -3,3 +3,13 @@ C:\Users\User\Documents\GitHub\кдз\1 семестр\hard individual 5\hard in
 C:\Users\User\Documents\GitHub\кдз\1 семестр\hard individual 5\hard individual 5\obj\Debug\net8.0\hard individual 5.AssemblyInfo.cs
 C:\Users\User\Documents\GitHub\кдз\1 семестр\hard individual 5\hard individual 5\obj\Debug\net8.0\hard individual 5.csproj.CoreCompileInputs.cache
 C:\Users\User\Documents\GitHub\кдз\1 семестр\hard individual 5\hard individual 5\obj\Debug\net8.0\hard individual 5.sourcelink.json
+C:\Users\User\Documents\GitHub\кдз\1 семестр\hard individual 5\hard individual 5\bin\Debug\net8.0\hard individual 5.exe
+C:\Users\User\Documents\GitHub\кдз\1 семестр\hard individual 5\hard individual 5\bin\Debug\net8.0\hard individual 5.deps.json
+C:\Users\User\Documents\GitHub\кдз\1 семестр\hard individual 5\hard individual 5\bin\Debug\net8.0\hard individual 5.runtimeconfig.json
+C:\Users\User\Documents\GitHub\кдз\1 семестр\hard individual 5\hard individual 5\bin\Debug\net8.0\hard individual 5.dll
+C:\Users\User\Documents\GitHub\кдз\1 семестр\hard individual 5\hard individual 5\bin\Debug\net8.0\hard individual 5.pdb
+C:\Users\User\Documents\GitHub\кдз\1 семестр\hard individual 5\hard individual 5\obj\Debug\net8.0\hard individual 5.dll
+C:\Users\User\Documents\GitHub\кдз\1 семестр\hard individual 5\hard individual 5\obj\Debug\net8.0\refint\hard individual 5.dll
+C:\Users\User\Documents\GitHub\кдз\1 семестр\hard individual 5\hard individual 5\obj\Debug\net8.0\hard individual 5.pdb
+C:\Users\User\Documents\GitHub\кдз\1 семестр\hard individual 5\hard individual 5\obj\Debug\net8.0\hard individual 5.genruntimeconfig.cache
+C:\Users\User\Documents\GitHub\кдз\1 семестр\hard individual 5\hard individual 5\obj\Debug\net8.0\ref\hard individual 5.dll

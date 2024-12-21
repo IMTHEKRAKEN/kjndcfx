@@ -1,125 +1,352 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
+// Абстрактный класс для всех выражений
 public abstract class Expression
 {
-    public abstract double Evaluate(double x);
-    public abstract string ToString();
-    public abstract Expression Differentiate();
+    public abstract Expression Differentiate(string variable);
+    public abstract double Evaluate(Dictionary<string, double> variables);
+    public abstract override string ToString();
 }
 
+// Константа
 public class Constant : Expression
 {
     public double Value { get; }
-    public Constant(double value) => Value = value;
-    public override double Evaluate(double x) => Value;
-    public override string ToString() => Value.ToString();
-    public override Expression Differentiate() => new Constant(0);
+
+    public Constant(double value)
+    {
+        Value = value;
+    }
+
+    public override Expression Differentiate(string variable)
+    {
+        return new Constant(0);
+    }
+
+    public override double Evaluate(Dictionary<string, double> variables)
+    {
+        return Value;
+    }
+
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
 }
 
+// Переменная
 public class Variable : Expression
 {
-    public override double Evaluate(double x) => x;
-    public override string ToString() => "x";
-    public override Expression Differentiate() => new Constant(1);
-}
+    public string Name { get; }
 
-public class UnaryOperation : Expression
-{
-    public string Operator { get; }
-    public Expression Operand { get; }
-
-    public UnaryOperation(string op, Expression operand)
+    public Variable(string name)
     {
-        Operator = op;
-        Operand = operand;
+        Name = name;
     }
 
-    public override double Evaluate(double x)
+    public override Expression Differentiate(string variable)
     {
-        switch (Operator)
+        return Name == variable ? new Constant(1) : new Constant(0);
+    }
+
+    public override double Evaluate(Dictionary<string, double> variables)
+    {
+        if (variables.TryGetValue(Name, out double value))
         {
-            case "sin": return Math.Sin(Operand.Evaluate(x));
-            case "cos": return Math.Cos(Operand.Evaluate(x));
-            case "exp": return Math.Exp(Operand.Evaluate(x));
-            case "ln": return Math.Log(Operand.Evaluate(x));
-            default: throw new ArgumentException($"Unknown unary operator: {Operator}");
+            return value;
+        }
+        else
+        {
+            throw new ArgumentException($"Variable '{Name}' not found in the dictionary.");
         }
     }
 
-    public override string ToString() => $"{Operator}({Operand})";
-
-    public override Expression Differentiate()
+    public override string ToString()
     {
-        switch (Operator)
-        {
-            case "sin": return new Product(new UnaryOperation("cos", Operand), Operand.Differentiate());
-            case "cos": return new Product(new Constant(-1), new Product(new UnaryOperation("sin", Operand), Operand.Differentiate()));
-            case "exp": return new Product(this, Operand.Differentiate());
-            case "ln": return new Quotient(Operand.Differentiate(), Operand);
-            default: throw new ArgumentException($"Derivative of {Operator} not implemented");
-        }
+        return Name;
     }
 }
 
-public class BinaryOperation : Expression
+// Сумма
+public class Sum : Expression
 {
-    public string Operator { get; }
     public Expression Left { get; }
     public Expression Right { get; }
 
-    public BinaryOperation(string op, Expression left, Expression right)
+    public Sum(Expression left, Expression right)
     {
-        Operator = op;
         Left = left;
         Right = right;
     }
 
-    public override double Evaluate(double x)
+    public override Expression Differentiate(string variable)
     {
-        switch (Operator)
-        {
-            case "+": return Left.Evaluate(x) + Right.Evaluate(x);
-            case "-": return Left.Evaluate(x) - Right.Evaluate(x);
-            case "*": return Left.Evaluate(x) * Right.Evaluate(x);
-            case "/": return Left.Evaluate(x) / Right.Evaluate(x);
-            case "^": return Math.Pow(Left.Evaluate(x), Right.Evaluate(x));
-            default: throw new ArgumentException($"Unknown binary operator: {Operator}");
-        }
+        return new Sum(Left.Differentiate(variable), Right.Differentiate(variable));
     }
 
-    public override string ToString() => $"({Left} {Operator} {Right})";
-
-    public override Expression Differentiate()
+    public override double Evaluate(Dictionary<string, double> variables)
     {
-        switch (Operator)
-        {
-            case "+": return new Sum(Left.Differentiate(), Right.Differentiate());
-            case "-": return new Difference(Left.Differentiate(), Right.Differentiate());
-            case "*": return new Sum(new Product(Left.Differentiate(), Right), new Product(Left, Right.Differentiate()));
-            case "/": return new Quotient(new Difference(new Product(Left.Differentiate(), Right), new Product(Left, Right.Differentiate())), new Power(Right, new Constant(2)));
-            case "^":
-                if (Right is Constant c) return new Product(new Constant(c.Value), new Power(Left, new Constant(c.Value - 1)));
-                else throw new NotImplementedException("Derivative of x^y not implemented");
-            default: throw new ArgumentException($"Derivative of {Operator} not implemented");
-        }
+        return Left.Evaluate(variables) + Right.Evaluate(variables);
+    }
+    public override string ToString()
+    {
+        return $"({Left} + {Right})";
     }
 }
 
-public class Sum : Expression { public Expression Left, Right; public Sum(Expression left, Expression right) { Left = left; Right = right; } public override double Evaluate(double x) => Left.Evaluate(x) + Right.Evaluate(x); public override string ToString() => $"({Left} + {Right})"; public override Expression Differentiate() => new Sum(Left.Differentiate(), Right.Differentiate()); }
-public class Difference : Expression { public Expression Left, Right; public Difference(Expression left, Expression right) { Left = left; Right = right; } public override double Evaluate(double x) => Left.Evaluate(x) - Right.Evaluate(x); public override string ToString() => $"({Left} - {Right})"; public override Expression Differentiate() => new Difference(Left.Differentiate(), Right.Differentiate()); }
-public class Product : Expression { public Expression Left, Right; public Product(Expression left, Expression right) { Left = left; Right = right; } public override double Evaluate(double x) => Left.Evaluate(x) * Right.Evaluate(x); public override string ToString() => $"({Left} * {Right})"; public override Expression Differentiate() => new Sum(new Product(Left.Differentiate(), Right), new Product(Left, Right.Differentiate())); }
-public class Quotient : Expression { public Expression Left, Right; public Quotient(Expression left, Expression right) { Left = left; Right = right; } public override double Evaluate(double x) => Left.Evaluate(x) / Right.Evaluate(x); public override string ToString() => $"({Left} / {Right})"; public override Expression Differentiate() => new Quotient(new Difference(new Product(Left.Differentiate(), Right), new Product(Left, Right.Differentiate())), new Power(Right, new Constant(2))); }
-public class Power : Expression { public Expression Left, Right; public Power(Expression left, Expression right) { Left = left; Right = right; } public override double Evaluate(double x) => Math.Pow(Left.Evaluate(x), Right.Evaluate(x)); public override string ToString() => $"({Left}^{Right})"; public override Expression Differentiate() { if (Right is Constant c) return new Product(new Constant(c.Value), new Power(Left, new Constant(c.Value - 1))); else throw new NotImplementedException("Derivative of x^y not implemented"); } }
-
-
-public class DifferentiatorTests
+// Разность
+public class Difference : Expression
 {
-    [Fact]
-    public void TestConstant() => Assert.Equal("0", new Constant(5).Differentiate().ToString());
+    public Expression Left { get; }
+    public Expression Right { get; }
 
-    [Fact]
-    public void TestVariable() => Assert.Equal("1", new Variable().Differentiate().ToString());
+    public Difference(Expression left, Expression right)
+    {
+        Left = left;
+        Right = right;
+    }
 
-    [Fact]
-    public void TestSinX() => Assert.Equal("(cos(x) * 1)", new UnaryOperation("sin", new Variable()).Differentiate().ToString());
+    public override Expression Differentiate(string variable)
+    {
+        return new Difference(Left.Differentiate(variable), Right.Differentiate(variable));
+    }
+    public override double Evaluate(Dictionary<string, double> variables)
+    {
+        return Left.Evaluate(variables) - Right.Evaluate(variables);
+    }
+    public override string ToString()
+    {
+        return $"({Left} - {Right})";
+    }
+}
+
+// Произведение
+public class Product : Expression
+{
+    public Expression Left { get; }
+    public Expression Right { get; }
+
+    public Product(Expression left, Expression right)
+    {
+        Left = left;
+        Right = right;
+    }
+
+    public override Expression Differentiate(string variable)
+    {
+        return new Sum(
+            new Product(Left.Differentiate(variable), Right),
+            new Product(Left, Right.Differentiate(variable)));
+    }
+    public override double Evaluate(Dictionary<string, double> variables)
+    {
+        return Left.Evaluate(variables) * Right.Evaluate(variables);
+    }
+    public override string ToString()
+    {
+        return $"({Left} * {Right})";
+    }
+}
+
+// Частное
+public class Quotient : Expression
+{
+    public Expression Numerator { get; }
+    public Expression Denominator { get; }
+
+    public Quotient(Expression numerator, Expression denominator)
+    {
+        Numerator = numerator;
+        Denominator = denominator;
+    }
+
+    public override Expression Differentiate(string variable)
+    {
+        return new Quotient(
+            new Difference(
+                new Product(Numerator.Differentiate(variable), Denominator),
+                new Product(Numerator, Denominator.Differentiate(variable))
+            ),
+            new Power(Denominator, new Constant(2))
+        );
+    }
+    public override double Evaluate(Dictionary<string, double> variables)
+    {
+        return Numerator.Evaluate(variables) / Denominator.Evaluate(variables);
+    }
+    public override string ToString()
+    {
+        return $"({Numerator} / {Denominator})";
+    }
+}
+
+
+// Возведение в степень
+public class Power : Expression
+{
+    public Expression Base { get; }
+    public Expression Exponent { get; }
+
+    public Power(Expression @base, Expression exponent)
+    {
+        Base = @base;
+        Exponent = exponent;
+    }
+
+    public override Expression Differentiate(string variable)
+    {
+        if (Exponent is Constant constExponent)
+        {
+            if (Base is Variable varBase)
+            {
+                return new Product(
+                    new Product(constExponent, new Power(varBase, new Constant(constExponent.Value - 1))),
+                    Base.Differentiate(variable)
+                    );
+            }
+
+            return new Product(
+                    new Product(Exponent, new Power(Base, new Difference(Exponent, new Constant(1)))),
+                    Base.Differentiate(variable));
+
+        }
+
+        return new Product(new Power(Base, Exponent),
+            new Sum(
+            new Product(Exponent.Differentiate(variable), new Ln(Base)),
+            new Product(Exponent, new Quotient(Base.Differentiate(variable), Base))
+        ));
+    }
+    public override double Evaluate(Dictionary<string, double> variables)
+    {
+        return Math.Pow(Base.Evaluate(variables), Exponent.Evaluate(variables));
+    }
+    public override string ToString()
+    {
+        return $"({Base} ^ {Exponent})";
+    }
+}
+
+
+// Синус
+public class Sin : Expression
+{
+    public Expression Argument { get; }
+
+    public Sin(Expression argument)
+    {
+        Argument = argument;
+    }
+
+    public override Expression Differentiate(string variable)
+    {
+        return new Product(new Cos(Argument), Argument.Differentiate(variable));
+    }
+    public override double Evaluate(Dictionary<string, double> variables)
+    {
+        return Math.Sin(Argument.Evaluate(variables));
+    }
+    public override string ToString()
+    {
+        return $"sin({Argument})";
+    }
+}
+
+// Косинус
+public class Cos : Expression
+{
+    public Expression Argument { get; }
+
+    public Cos(Expression argument)
+    {
+        Argument = argument;
+    }
+
+    public override Expression Differentiate(string variable)
+    {
+        return new Product(new Product(new Constant(-1), new Sin(Argument)), Argument.Differentiate(variable));
+    }
+    public override double Evaluate(Dictionary<string, double> variables)
+    {
+        return Math.Cos(Argument.Evaluate(variables));
+    }
+    public override string ToString()
+    {
+        return $"cos({Argument})";
+    }
+}
+
+// Тангенс
+public class Tan : Expression
+{
+    public Expression Argument { get; }
+
+    public Tan(Expression argument)
+    {
+        Argument = argument;
+    }
+
+    public override Expression Differentiate(string variable)
+    {
+        return new Product(new Quotient(new Constant(1), new Power(new Cos(Argument), new Constant(2))), Argument.Differentiate(variable));
+    }
+
+    public override double Evaluate(Dictionary<string, double> variables)
+    {
+        return Math.Tan(Argument.Evaluate(variables));
+    }
+    public override string ToString()
+    {
+        return $"tan({Argument})";
+    }
+}
+
+// Экспонента
+public class Exp : Expression
+{
+    public Expression Argument { get; }
+
+    public Exp(Expression argument)
+    {
+        Argument = argument;
+    }
+
+    public override Expression Differentiate(string variable)
+    {
+        return new Product(new Exp(Argument), Argument.Differentiate(variable));
+    }
+    public override double Evaluate(Dictionary<string, double> variables)
+    {
+        return Math.Exp(Argument.Evaluate(variables));
+    }
+    public override string ToString()
+    {
+        return $"exp({Argument})";
+    }
+}
+
+// Натуральный логарифм
+public class Ln : Expression
+{
+    public Expression Argument { get; }
+
+    public Ln(Expression argument)
+    {
+        Argument = argument;
+    }
+
+    public override Expression Differentiate(string variable)
+    {
+        return new Product(new Quotient(new Constant(1), Argument), Argument.Differentiate(variable));
+    }
+    public override double Evaluate(Dictionary<string, double> variables)
+    {
+        return Math.Log(Argument.Evaluate(variables));
+    }
+    public override string ToString()
+    {
+        return $"ln({Argument})";
+    }
 }
